@@ -1,0 +1,2215 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Playtara Academy — A New-Age Campus for Human Potential</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@200;300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <style>
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      :root {
+        --ink: #0d0d0d;
+        --navy: #0b1b2b;
+        --navy-deep: #060e18;
+        --cream: #f4efe6;
+        --cream-warm: #ede6d8;
+        --gold: #c9a96e;
+        --gold-light: #dfc08a;
+        --sage: #2d4a3e;
+        --forest: #1a3028;
+        --soft: #8fa89a;
+        --serif: "Cormorant Garamond", Georgia, serif;
+        --sans: "DM Sans", system-ui, sans-serif;
+      }
+
+      html {
+        scroll-behavior: auto;
+        overflow-x: clip;
+      }
+      body {
+        background: var(--navy-deep);
+        color: var(--cream);
+        font-family: var(--sans);
+        font-weight: 300;
+        cursor: none;
+      }
+
+      /* ─── CUSTOM CURSOR ─── */
+      #cursor-dot {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 9999;
+        width: 6px;
+        height: 6px;
+        background: var(--cream);
+        border-radius: 50%;
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        transition:
+          width 0.3s,
+          height 0.3s,
+          background 0.4s;
+        mix-blend-mode: difference;
+      }
+      #cursor-ring {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 9998;
+        width: 36px;
+        height: 36px;
+        border: 1px solid rgba(201, 169, 110, 0.5);
+        border-radius: 50%;
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        transition:
+          width 0.5s cubic-bezier(0.6, 0.05, 0.1, 0.9),
+          height 0.5s cubic-bezier(0.6, 0.05, 0.1, 0.9),
+          border-color 0.4s;
+      }
+      body.cursor-text #cursor-dot {
+        width: 48px;
+        height: 48px;
+        background: var(--gold);
+        mix-blend-mode: difference;
+      }
+      body.cursor-text #cursor-ring {
+        width: 0;
+        height: 0;
+        opacity: 0;
+      }
+      body.cursor-hover #cursor-dot {
+        width: 10px;
+        height: 10px;
+        background: var(--gold);
+      }
+      body.cursor-hover #cursor-ring {
+        width: 56px;
+        height: 56px;
+        border-color: var(--gold);
+      }
+
+      /* ─── LOADER ─── */
+      #loader {
+        position: fixed;
+        inset: 0;
+        z-index: 10000;
+        background: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      #loader.hidden {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.9s 0.3s;
+      }
+      .loader-word {
+        font-family: var(--serif);
+        font-size: clamp(3rem, 8vw, 7rem);
+        font-weight: 300;
+        letter-spacing: 0.35em;
+        color: transparent;
+        -webkit-text-stroke: 1px var(--gold);
+        opacity: 0;
+        transition:
+          opacity 0.8s,
+          letter-spacing 0.6s;
+      }
+      .loader-line {
+        width: 0;
+        height: 1px;
+        background: var(--gold);
+        transition: width 1.2s cubic-bezier(0.6, 0.05, 0.1, 0.9);
+      }
+      .loader-academy {
+        font-family: var(--serif);
+        font-size: clamp(1.8rem, 4.5vw, 4rem);
+        font-weight: 300;
+        letter-spacing: 0.35em;
+        color: transparent;
+        -webkit-text-stroke: 1px var(--gold);
+        opacity: 0;
+        transition: opacity 0.8s 0.4s;
+      }
+
+      /* ─── NAV ─── */
+      #nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 2rem 4rem;
+        opacity: 0;
+        transition:
+          opacity 0.8s,
+          background 0.6s;
+      }
+      #nav.visible {
+        opacity: 1;
+      }
+      #nav.scrolled {
+        background: rgba(6, 14, 24, 0.85);
+        backdrop-filter: blur(12px);
+      }
+      .nav-logo {
+        font-family: var(--serif);
+        font-size: 1.1rem;
+        letter-spacing: 0.25em;
+        color: var(--cream);
+        text-transform: uppercase;
+        font-weight: 400;
+        text-decoration: none;
+      }
+      .nav-links {
+        display: flex;
+        gap: 3rem;
+        list-style: none;
+      }
+      .nav-links a {
+        font-family: var(--sans);
+        font-size: 0.65rem;
+        letter-spacing: 0.18em;
+        color: rgba(244, 239, 230, 0.55);
+        text-decoration: none;
+        text-transform: uppercase;
+        transition: color 0.4s;
+      }
+      .nav-links a:hover {
+        color: var(--gold);
+      }
+
+      /* ─── HERO / ARRIVAL ─── */
+      #arrival {
+        position: relative;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #000;
+        overflow: hidden;
+      }
+      .arrival-bg {
+        position: absolute;
+        inset: 0;
+        background-image: url("hero.jpeg");
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        transform: scale(1.08);
+        transition:
+          opacity 2s ease,
+          transform 7s ease;
+      }
+      .arrival-bg.revealed {
+        opacity: 0.55;
+        transform: scale(1);
+      }
+      .arrival-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          to bottom,
+          rgba(6, 14, 24, 0.25) 0%,
+          rgba(6, 14, 24, 0.65) 100%
+        );
+      }
+      .arrival-center {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.6rem;
+      }
+      .arrival-title {
+        font-family: var(--serif);
+        font-size: clamp(5rem, 12vw, 11rem);
+        font-weight: 300;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--cream);
+        line-height: 1;
+        display: flex;
+        gap: 0.03em;
+      }
+      .arrival-subtitle {
+        font-family: var(--serif);
+        font-size: clamp(1.4rem, 3.5vw, 3.2rem);
+        font-weight: 300;
+        letter-spacing: 0.35em;
+        color: transparent;
+        -webkit-text-stroke: 1px var(--gold);
+        text-transform: uppercase;
+        line-height: 1;
+      }
+      .arrival-title .letter {
+        display: inline-block;
+      }
+      .arrival-tagline {
+        position: absolute;
+        bottom: 3.5rem;
+        left: 4rem;
+        font-family: var(--sans);
+        font-size: 0.65rem;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: rgba(244, 239, 230, 0.45);
+        opacity: 0;
+        transform: translateY(10px);
+        transition:
+          opacity 1.2s 2.4s,
+          transform 1.2s 2.4s;
+      }
+      .arrival-tagline.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .scroll-hint {
+        position: absolute;
+        bottom: 3.5rem;
+        right: 4rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        opacity: 0;
+        transition: opacity 1.2s 3.2s;
+      }
+      .scroll-hint.visible {
+        opacity: 1;
+      }
+      .scroll-hint span {
+        font-size: 0.6rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: rgba(244, 239, 230, 0.35);
+      }
+      .scroll-line {
+        width: 1px;
+        height: 40px;
+        background: linear-gradient(
+          to bottom,
+          rgba(201, 169, 110, 0.8),
+          transparent
+        );
+        animation: scrollPulse 2s ease-in-out infinite;
+      }
+      @keyframes scrollPulse {
+        0%,
+        100% {
+          opacity: 0.4;
+          transform: scaleY(1);
+        }
+        50% {
+          opacity: 1;
+          transform: scaleY(1.2);
+        }
+      }
+
+      /* ─── MANIFESTO ─── */
+      #manifesto {
+        position: relative;
+        min-height: 400vh;
+        background: var(--navy-deep);
+        overflow: clip;
+      }
+      .manifesto-sticky {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: clip;
+      }
+      .manifesto-bg-text {
+        position: absolute;
+        font-family: var(--serif);
+        font-size: clamp(8rem, 22vw, 26rem);
+        font-weight: 600;
+        color: rgba(201, 169, 110, 0.04);
+        white-space: nowrap;
+        pointer-events: none;
+        user-select: none;
+        line-height: 1;
+        top: 50%;
+        left: -5%;
+        transform: translateY(-50%);
+      }
+      .manifesto-lines {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        padding: 0 2rem;
+        max-width: 900px;
+        width: 100%;
+        height: clamp(12rem, 20vh, 20rem);
+      }
+      .manifesto-line {
+        display: block;
+        font-family: var(--serif);
+        font-size: clamp(2rem, 4.5vw, 4.5rem);
+        font-weight: 300;
+        line-height: 1.25;
+        color: var(--cream);
+        opacity: 0;
+        position: absolute;
+        width: 100%;
+        left: 0;
+        top: 50%;
+        transform: translate(0, calc(-50% + 40px));
+        transition: none;
+        letter-spacing: 0.02em;
+        pointer-events: none;
+      }
+      .manifesto-line.italic {
+        font-style: italic;
+        color: var(--gold-light);
+      }
+      .manifesto-line.active {
+        opacity: 1;
+        transform: translate(0, -50%);
+        pointer-events: auto;
+        transition:
+          opacity 1.2s cubic-bezier(0.6, 0.05, 0.1, 0.9),
+          transform 1.2s cubic-bezier(0.6, 0.05, 0.1, 0.9);
+      }
+      .manifesto-line.exiting {
+        opacity: 0;
+        transform: translate(0, calc(-50% - 30px));
+        transition:
+          opacity 0.7s cubic-bezier(0.6, 0.05, 0.1, 0.9),
+          transform 0.7s cubic-bezier(0.6, 0.05, 0.1, 0.9);
+      }
+
+      /* ─── 250 ACRES CAMPUS ─── */
+      #acres {
+        min-height: 100vh;
+        position: relative;
+        background: var(--navy);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        padding: 8rem 0;
+      }
+      .acres-bg {
+        position: absolute;
+        inset: 0;
+        background-image: url("https://images.unsplash.com/photo-1576765608622-067973a79f53?w=1800&q=80");
+        background-size: cover;
+        background-position: center;
+        opacity: 0.1;
+        filter: saturate(0.3);
+      }
+      .acres-bg-text {
+        position: absolute;
+        font-family: var(--serif);
+        font-size: clamp(10rem, 25vw, 28rem);
+        font-weight: 600;
+        color: rgba(201, 169, 110, 0.03);
+        white-space: nowrap;
+        pointer-events: none;
+        user-select: none;
+        line-height: 1;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      .acres-content {
+        position: relative;
+        z-index: 2;
+        max-width: 1100px;
+        width: 100%;
+        padding: 0 4rem;
+      }
+      .acres-eyebrow {
+        font-family: var(--sans);
+        font-size: 0.65rem;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 2rem;
+        opacity: 0;
+        transform: translateY(30px);
+        transition:
+          opacity 1s,
+          transform 1s;
+      }
+      .acres-eyebrow.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .acres-title {
+        font-family: var(--serif);
+        font-size: clamp(3rem, 6vw, 6rem);
+        font-weight: 300;
+        line-height: 1.1;
+        margin-bottom: 5rem;
+        color: var(--cream);
+        opacity: 0;
+        transform: translateY(40px);
+        transition:
+          opacity 1.2s 0.15s,
+          transform 1.2s 0.15s;
+      }
+      .acres-title.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .acres-title em {
+        font-style: italic;
+        color: var(--gold-light);
+      }
+      .hotspots-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0;
+        border-top: 1px solid rgba(244, 239, 230, 0.1);
+      }
+      .hotspot {
+        padding: 2.5rem 2rem;
+        border-right: 1px solid rgba(244, 239, 230, 0.1);
+        border-bottom: 1px solid rgba(244, 239, 230, 0.1);
+        cursor: none;
+        position: relative;
+        overflow: hidden;
+        transition: background 0.6s cubic-bezier(0.6, 0.05, 0.1, 0.9);
+      }
+      .hotspot:nth-child(3n) {
+        border-right: none;
+      }
+      .hotspot::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          135deg,
+          rgba(45, 74, 62, 0.2),
+          rgba(201, 169, 110, 0.06)
+        );
+        opacity: 0;
+        transition: opacity 0.6s;
+      }
+      .hotspot:hover::before {
+        opacity: 1;
+      }
+      .hotspot-img {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+        margin-bottom: 1.5rem;
+        filter: brightness(0.65) saturate(0.7);
+        transition:
+          filter 0.8s,
+          transform 0.8s cubic-bezier(0.6, 0.05, 0.1, 0.9);
+        transform: scale(1);
+      }
+      .hotspot:hover .hotspot-img {
+        filter: brightness(0.85) saturate(1);
+        transform: scale(1.03);
+      }
+      .hotspot-name {
+        font-family: var(--serif);
+        font-size: 1.3rem;
+        font-weight: 400;
+        color: var(--cream);
+        margin-bottom: 0.5rem;
+        letter-spacing: 0.03em;
+      }
+      .hotspot-desc {
+        font-family: var(--sans);
+        font-size: 0.72rem;
+        line-height: 1.7;
+        color: rgba(244, 239, 230, 0.4);
+        letter-spacing: 0.02em;
+      }
+      .hotspot-number {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        font-family: var(--serif);
+        font-size: 0.8rem;
+        color: rgba(201, 169, 110, 0.25);
+        letter-spacing: 0.1em;
+      }
+
+      /* ─── THE DAY ─── */
+      #the-day {
+        min-height: 100vh;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        background: var(--cream);
+        color: var(--navy);
+        position: relative;
+      }
+      .day-left {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: var(--navy);
+        padding: 4rem;
+      }
+      .clock-face {
+        width: min(280px, 40vw);
+        height: min(280px, 40vw);
+        border-radius: 50%;
+        border: 1px solid rgba(201, 169, 110, 0.3);
+        position: relative;
+        margin-bottom: 2rem;
+      }
+      .clock-inner {
+        position: absolute;
+        inset: 12px;
+        border-radius: 50%;
+        border: 1px solid rgba(201, 169, 110, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .clock-time {
+        font-family: var(--serif);
+        font-size: 2.2rem;
+        font-weight: 300;
+        color: var(--cream);
+        letter-spacing: 0.05em;
+      }
+      .clock-hand {
+        position: absolute;
+        bottom: 50%;
+        left: 50%;
+        width: 1px;
+        transform-origin: bottom center;
+        background: var(--gold);
+        transition: transform 0.8s cubic-bezier(0.6, 0.05, 0.1, 0.9);
+      }
+      .clock-hand.hour {
+        height: 28%;
+        transform: translateX(-50%) rotate(0deg);
+      }
+      .clock-hand.minute {
+        height: 38%;
+        transform: translateX(-50%) rotate(0deg);
+        opacity: 0.6;
+      }
+      .clock-label {
+        font-family: var(--sans);
+        font-size: 0.65rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: rgba(244, 239, 230, 0.35);
+      }
+      .clock-dot {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--gold);
+        transform: translate(-50%, -50%);
+      }
+      .day-right {
+        padding: 8rem 4rem;
+        background: var(--cream);
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+      .day-block {
+        padding: 5rem 0;
+        border-bottom: 1px solid rgba(11, 27, 43, 0.1);
+        opacity: 0.3;
+        transition: opacity 0.8s;
+      }
+      .day-block.active {
+        opacity: 1;
+      }
+      .day-block:last-child {
+        border-bottom: none;
+      }
+      .day-time {
+        font-family: var(--sans);
+        font-size: 0.6rem;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 1rem;
+      }
+      .day-text {
+        font-family: var(--serif);
+        font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+        font-weight: 300;
+        line-height: 1.4;
+        color: var(--navy);
+      }
+      .day-sub {
+        font-family: var(--sans);
+        font-size: 0.8rem;
+        line-height: 1.8;
+        color: rgba(11, 27, 43, 0.5);
+        margin-top: 1rem;
+        max-width: 400px;
+      }
+      .day-img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        margin-top: 1.5rem;
+        filter: saturate(0.7);
+      }
+
+      /* ─── CAMPUS / CHILD ECOSYSTEM ─── */
+      #ecosystem {
+        background: var(--navy-deep);
+        padding: 8rem 4rem;
+        position: relative;
+        overflow: hidden;
+      }
+      .ecosystem-header {
+        max-width: 1200px;
+        margin: 0 auto 6rem;
+      }
+      .ecosystem-eyebrow {
+        font-family: var(--sans);
+        font-size: 0.65rem;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 1.5rem;
+        opacity: 0;
+        transform: translateY(20px);
+        transition:
+          opacity 1s,
+          transform 1s;
+      }
+      .ecosystem-eyebrow.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .ecosystem-title {
+        font-family: var(--serif);
+        font-size: clamp(3rem, 6vw, 6rem);
+        font-weight: 300;
+        line-height: 1.1;
+        color: var(--cream);
+        max-width: 700px;
+        opacity: 0;
+        transform: translateY(30px);
+        transition:
+          opacity 1.2s 0.1s,
+          transform 1.2s 0.1s;
+      }
+      .ecosystem-title.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .ecosystem-title em {
+        font-style: italic;
+        color: var(--gold-light);
+      }
+      .ecosystem-body {
+        font-family: var(--sans);
+        font-size: 0.9rem;
+        line-height: 2;
+        color: rgba(244, 239, 230, 0.45);
+        max-width: 520px;
+        margin-top: 2rem;
+        opacity: 0;
+        transform: translateY(20px);
+        transition:
+          opacity 1s 0.25s,
+          transform 1s 0.25s;
+      }
+      .ecosystem-body.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .pillars-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0;
+        max-width: 1400px;
+        margin: 0 auto;
+        border: 1px solid rgba(201, 169, 110, 0.12);
+      }
+      .pillar-card {
+        position: relative;
+        padding: 4rem 2.5rem;
+        border-right: 1px solid rgba(201, 169, 110, 0.12);
+        overflow: hidden;
+        cursor: none;
+        opacity: 0;
+        transform: translateY(60px);
+        transition:
+          opacity 0.8s,
+          transform 0.8s;
+      }
+      .pillar-card.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .pillar-card:last-child {
+        border-right: none;
+      }
+      .pillar-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: var(--pillar-color, var(--sage));
+        transform: scaleY(0);
+        transform-origin: bottom;
+        transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 0;
+      }
+      .pillar-card:hover::before {
+        transform: scaleY(1);
+      }
+      .pillar-card:nth-child(1) {
+        --pillar-color: #2d4a3e;
+      }
+      .pillar-card:nth-child(2) {
+        --pillar-color: #3a2a1a;
+      }
+      .pillar-card:nth-child(3) {
+        --pillar-color: #1a2a3a;
+      }
+      .pillar-card:nth-child(4) {
+        --pillar-color: #2a1a2a;
+      }
+      .pillar-card:nth-child(5) {
+        --pillar-color: #1a3028;
+      }
+      .pillar-inner {
+        position: relative;
+        z-index: 1;
+      }
+      .pillar-number {
+        font-family: var(--serif);
+        font-size: 3.5rem;
+        font-weight: 300;
+        color: rgba(201, 169, 110, 0.25);
+        line-height: 1;
+        margin-bottom: 2rem;
+        display: block;
+        transition: color 0.5s;
+      }
+      .pillar-card:hover .pillar-number {
+        color: rgba(201, 169, 110, 0.6);
+      }
+      .pillar-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+        display: block;
+        filter: grayscale(0.3);
+        transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .pillar-card:hover .pillar-icon {
+        transform: scale(1.2) rotate(-5deg);
+      }
+      .pillar-name {
+        font-family: var(--serif);
+        font-size: 1.6rem;
+        font-weight: 400;
+        color: var(--cream);
+        margin-bottom: 1rem;
+        line-height: 1.2;
+      }
+      .pillar-desc {
+        font-size: 0.78rem;
+        line-height: 1.9;
+        color: rgba(244, 239, 230, 0.4);
+        transition: color 0.4s;
+      }
+      .pillar-card:hover .pillar-desc {
+        color: rgba(244, 239, 230, 0.8);
+      }
+      .pillar-sep {
+        width: 0;
+        height: 1px;
+        background: var(--gold);
+        margin: 1.5rem 0;
+        transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .pillar-card:hover .pillar-sep {
+        width: 100%;
+      }
+
+      /* ─── FULLSCREEN PILLARS (Sport/Art/Intelligence/Society) ─── */
+      #pillars-full {
+        background: #000;
+      }
+      .pillar-slide {
+        height: 100vh;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+      .pillar-bg {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        transform: scale(1.06);
+        transition: transform 8s ease;
+      }
+      .pillar-slide:hover .pillar-bg {
+        transform: scale(1);
+      }
+      .pillar-veil {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.52);
+      }
+      .pillar-slide-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        padding: 2rem;
+      }
+      .pillar-word {
+        font-family: var(--serif);
+        font-size: clamp(5rem, 13vw, 11rem);
+        font-weight: 300;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--cream);
+        line-height: 1;
+        display: block;
+      }
+      .pillar-poem {
+        font-family: var(--serif);
+        font-size: 1rem;
+        letter-spacing: 0.06em;
+        color: rgba(244, 239, 230, 0.5);
+        margin-top: 2rem;
+        font-style: italic;
+      }
+      .pillar-gold-line {
+        width: 40px;
+        height: 1px;
+        background: var(--gold);
+        margin: 1.8rem auto;
+      }
+
+      /* ─── SPORTS ROWS ─── */
+      #sports-list {
+        background: var(--navy-deep);
+        padding: 8rem 0;
+        position: relative;
+        overflow: hidden;
+      }
+      .sports-marquee-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        font-family: var(--serif);
+        font-size: clamp(6rem, 15vw, 15rem);
+        font-weight: 600;
+        color: rgba(201, 169, 110, 0.04);
+        white-space: nowrap;
+        overflow: hidden;
+        line-height: 1;
+        pointer-events: none;
+        display: flex;
+        gap: 4rem;
+      }
+      .marquee-track {
+        display: flex;
+        gap: 4rem;
+        animation: marqueeScroll 30s linear infinite;
+        white-space: nowrap;
+      }
+      @keyframes marqueeScroll {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-50%);
+        }
+      }
+      .sports-header {
+        padding: 0 4rem;
+        margin-bottom: 5rem;
+      }
+      .sports-eyebrow {
+        font-family: var(--sans);
+        font-size: 0.65rem;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 1rem;
+        opacity: 0;
+        transform: translateY(20px);
+        transition:
+          opacity 1s,
+          transform 1s;
+      }
+      .sports-eyebrow.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .sports-title {
+        font-family: var(--serif);
+        font-size: clamp(2.5rem, 5vw, 5rem);
+        font-weight: 300;
+        color: var(--cream);
+        max-width: 600px;
+        line-height: 1.1;
+        opacity: 0;
+        transform: translateY(30px);
+        transition:
+          opacity 1.2s 0.1s,
+          transform 1.2s 0.1s;
+      }
+      .sports-title.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .sport-row {
+        display: grid;
+        grid-template-columns: 80px 1fr 320px;
+        align-items: center;
+        border-top: 1px solid rgba(244, 239, 230, 0.07);
+        padding: 0 4rem;
+        cursor: none;
+        transition: background 0.5s;
+        overflow: hidden;
+      }
+      .sport-row:last-child {
+        border-bottom: 1px solid rgba(244, 239, 230, 0.07);
+      }
+      .sport-row:hover {
+        background: rgba(45, 74, 62, 0.12);
+      }
+      .sport-num {
+        font-family: var(--serif);
+        font-size: 0.75rem;
+        color: rgba(201, 169, 110, 0.3);
+        letter-spacing: 0.1em;
+        padding: 2rem 0;
+      }
+      .sport-name {
+        font-family: var(--serif);
+        font-size: clamp(1.6rem, 3vw, 2.8rem);
+        font-weight: 300;
+        color: var(--cream);
+        padding: 1.5rem 2rem;
+        transition: color 0.4s;
+        letter-spacing: 0.02em;
+      }
+      .sport-row:hover .sport-name {
+        color: var(--gold-light);
+      }
+      .sport-thumb {
+        width: 100%;
+        height: 0;
+        overflow: hidden;
+        transition: height 0.6s cubic-bezier(0.6, 0.05, 0.1, 0.9);
+        position: relative;
+      }
+      .sport-row:hover .sport-thumb {
+        height: 90px;
+      }
+      .sport-thumb img {
+        width: 100%;
+        height: 90px;
+        object-fit: cover;
+        filter: brightness(0.7) saturate(0.8);
+        position: absolute;
+        bottom: 0;
+        left: 0;
+      }
+
+      /* ─── STATS ─── */
+      #stats-bar {
+        background: var(--forest);
+        padding: 6rem 4rem;
+        display: flex;
+        justify-content: center;
+        gap: 8rem;
+        align-items: center;
+        border-top: 1px solid rgba(201, 169, 110, 0.1);
+        border-bottom: 1px solid rgba(201, 169, 110, 0.1);
+      }
+      .stat-item {
+        text-align: center;
+      }
+      .stat-num {
+        font-family: var(--serif);
+        font-size: clamp(4rem, 8vw, 7rem);
+        font-weight: 300;
+        color: var(--gold);
+        line-height: 1;
+        display: block;
+      }
+      .stat-label {
+        font-family: var(--sans);
+        font-size: 0.65rem;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: rgba(244, 239, 230, 0.35);
+        margin-top: 0.75rem;
+      }
+
+      /* ─── CLOSING / FINAL WORD ─── */
+      #closing {
+        min-height: 100vh;
+        background: var(--cream-warm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        padding: 10rem 4rem;
+        text-align: center;
+      }
+      .closing-bg-text {
+        position: absolute;
+        font-family: var(--serif);
+        font-size: clamp(10rem, 25vw, 28rem);
+        font-weight: 600;
+        color: rgba(45, 74, 62, 0.04);
+        white-space: nowrap;
+        pointer-events: none;
+        user-select: none;
+        line-height: 1;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      .closing-content {
+        position: relative;
+        z-index: 2;
+        max-width: 900px;
+      }
+      .closing-label {
+        font-family: var(--sans);
+        font-size: 0.65rem;
+        letter-spacing: 0.4em;
+        text-transform: uppercase;
+        color: var(--soft);
+        margin-bottom: 2rem;
+        display: block;
+        opacity: 0;
+        transform: translateY(20px);
+        transition:
+          opacity 1s,
+          transform 1s;
+      }
+      .closing-label.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .closing-heading {
+        font-family: var(--serif);
+        font-size: clamp(3.5rem, 7vw, 7rem);
+        font-weight: 300;
+        line-height: 1.05;
+        color: var(--forest);
+        margin-bottom: 3rem;
+        opacity: 0;
+        transform: translateY(40px);
+        transition:
+          opacity 1.2s 0.1s,
+          transform 1.2s 0.1s;
+      }
+      .closing-heading.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .closing-heading em {
+        font-style: italic;
+        color: var(--sage);
+      }
+      .closing-divider {
+        width: 60px;
+        height: 1px;
+        background: var(--gold);
+        margin: 0 auto 3rem;
+        opacity: 0;
+        transform: scaleX(0);
+        transform-origin: center;
+        transition:
+          opacity 0.8s 0.3s,
+          transform 1.2s 0.3s;
+      }
+      .closing-divider.visible {
+        opacity: 1;
+        transform: scaleX(1);
+      }
+      .closing-text {
+        font-family: var(--serif);
+        font-size: clamp(1.4rem, 2.5vw, 2.2rem);
+        font-style: italic;
+        font-weight: 300;
+        color: rgba(26, 48, 40, 0.65);
+        line-height: 1.6;
+        margin-bottom: 4rem;
+        opacity: 0;
+        transform: translateY(20px);
+        transition:
+          opacity 1s 0.4s,
+          transform 1s 0.4s;
+      }
+      .closing-text.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .closing-cta-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+        opacity: 0;
+        transform: translateY(20px);
+        transition:
+          opacity 1s 0.6s,
+          transform 1s 0.6s;
+      }
+      .closing-cta-row.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .cta-btn {
+        font-family: var(--sans);
+        font-size: 0.7rem;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        color: var(--forest);
+        text-decoration: none;
+        border: 1px solid var(--gold);
+        padding: 1rem 2.5rem;
+        transition:
+          background 0.4s,
+          color 0.4s;
+        cursor: none;
+      }
+      .cta-btn:hover {
+        background: var(--forest);
+        color: var(--cream);
+      }
+      .cta-btn.primary {
+        background: var(--forest);
+        color: var(--cream);
+      }
+      .cta-btn.primary:hover {
+        background: var(--sage);
+      }
+
+      /* ─── FOOTER ─── */
+      footer {
+        background: var(--navy-deep);
+        padding: 3rem 4rem;
+        border-top: 1px solid rgba(244, 239, 230, 0.06);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .footer-mark {
+        font-family: var(--serif);
+        font-size: 0.9rem;
+        letter-spacing: 0.15em;
+        color: rgba(244, 239, 230, 0.2);
+        text-transform: uppercase;
+      }
+      .footer-tagline {
+        font-family: var(--sans);
+        font-size: 0.6rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: rgba(244, 239, 230, 0.2);
+      }
+      .footer-legal {
+        font-family: var(--sans);
+        font-size: 0.6rem;
+        letter-spacing: 0.08em;
+        color: rgba(244, 239, 230, 0.12);
+        display: flex;
+        gap: 2rem;
+      }
+
+      /* ─── UTILITIES ─── */
+      @media (max-width: 900px) {
+        #nav {
+          padding: 1.5rem 2rem;
+        }
+        .nav-links {
+          display: none;
+        }
+        #the-day {
+          grid-template-columns: 1fr;
+        }
+        .day-left {
+          display: none;
+        }
+        .hotspots-grid {
+          grid-template-columns: 1fr;
+        }
+        .pillars-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .sport-row {
+          grid-template-columns: 50px 1fr;
+        }
+        .sport-thumb {
+          display: none;
+        }
+        #stats-bar {
+          flex-direction: column;
+          gap: 4rem;
+        }
+        footer {
+          flex-direction: column;
+          gap: 1rem;
+          text-align: center;
+        }
+        .arrival-tagline,
+        .scroll-hint {
+          display: none;
+        }
+        .acres-content {
+          padding: 0 2rem;
+        }
+        #sports-list,
+        #ecosystem,
+        #closing {
+          padding: 6rem 2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- CURSOR -->
+    <div id="cursor-dot"></div>
+    <div id="cursor-ring"></div>
+
+    <!-- LOADER -->
+    <div id="loader">
+      <div class="loader-word" id="loaderWord">PLAYTARA</div>
+      <div class="loader-line" id="loaderLine"></div>
+      <div class="loader-academy" id="loaderAcademy">Academy</div>
+    </div>
+
+    <!-- NAV -->
+    <nav id="nav">
+      <a class="nav-logo" href="#arrival">Playtara</a>
+      <ul class="nav-links">
+        <li><a href="#manifesto">The Vision</a></li>
+        <li><a href="#acres">The Campus</a></li>
+        <li><a href="#the-day">A Day</a></li>
+        <li><a href="#sports-list">Sports</a></li>
+        <li><a href="#pillars-full">Pillars</a></li>
+        <li><a href="#closing">Connect</a></li>
+      </ul>
+    </nav>
+
+    <!-- SECTION 1: ARRIVAL / HERO -->
+    <section id="arrival">
+      <div class="arrival-bg" id="arrivalBg"></div>
+      <div class="arrival-overlay"></div>
+      <div class="arrival-center">
+        <div class="arrival-title" id="arrivalTitle">
+          <span class="letter">P</span><span class="letter">L</span
+          ><span class="letter">A</span><span class="letter">Y</span
+          ><span class="letter">T</span><span class="letter">A</span
+          ><span class="letter">R</span><span class="letter">A</span>
+        </div>
+        <div class="arrival-subtitle">Academy</div>
+      </div>
+      <div class="arrival-tagline" id="arrivalTagline">
+        A sanctuary for human potential.
+      </div>
+      <div class="scroll-hint" id="scrollHint">
+        <div class="scroll-line"></div>
+        <span>Scroll</span>
+      </div>
+    </section>
+
+    <!-- SECTION 2: MANIFESTO -->
+    <section id="manifesto">
+      <div class="manifesto-sticky">
+        <div class="manifesto-bg-text" id="manifestoBgText">POTENTIAL</div>
+        <div class="manifesto-lines" id="manifestoLines">
+          <span class="manifesto-line" id="mLine1"
+            >We don't believe in average.<br />We believe in
+            <em style="font-style: italic; color: var(--gold-light)"
+              >potential</em
+            >.</span
+          >
+          <span class="manifesto-line italic" id="mLine2"
+            >Every child should experience<br />100 lives — before choosing
+            one.</span
+          >
+          <span class="manifesto-line" id="mLine3"
+            >This is not a school.<br />This is a living ecosystem.</span
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: 250 ACRES CAMPUS -->
+    <section id="acres">
+      <div class="acres-bg"></div>
+      <div class="acres-bg-text" aria-hidden="true">250</div>
+      <div class="acres-content">
+        <div class="acres-eyebrow">The campus</div>
+        <div class="acres-title">
+          Two hundred acres<br />of <em>living</em> possibility.
+        </div>
+        <div class="hotspots-grid">
+          <div class="hotspot">
+            <span class="hotspot-number">01</span>
+            <img
+              src="https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=400&q=75"
+              alt="Chess Pavilion"
+              class="hotspot-img"
+            />
+            <div class="hotspot-name">Chess Pavilion</div>
+            <div class="hotspot-desc">
+              Where stillness becomes strategy. Grand masters, resident coaches,
+              and the quiet architecture of the mind.
+            </div>
+          </div>
+          <div class="hotspot">
+            <span class="hotspot-number">02</span>
+            <img
+              src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=75"
+              alt="Olympic Swimming Complex"
+              class="hotspot-img"
+            />
+            <div class="hotspot-name">Swimming Complex</div>
+            <div class="hotspot-desc">
+              Olympic-standard pools. Competitive lanes, synchronized swimming,
+              open water training at sunrise.
+            </div>
+          </div>
+          <div class="hotspot">
+            <span class="hotspot-number">03</span>
+            <img
+              src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400&q=75"
+              alt="AI Robotics Lab"
+              class="hotspot-img"
+            />
+            <div class="hotspot-name">AI & Robotics Lab</div>
+            <div class="hotspot-desc">
+              Four hours of AI-personalized academics. Children learn to build
+              with technology, not fear it.
+            </div>
+          </div>
+          <div class="hotspot">
+            <span class="hotspot-number">04</span>
+            <img
+              src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&q=75"
+              alt="Music Conservatory"
+              class="hotspot-img"
+            />
+            <div class="hotspot-name">Music Conservatory</div>
+            <div class="hotspot-desc">
+              Every instrument. Every genre. Where children discover that
+              creativity and discipline are the same word.
+            </div>
+          </div>
+          <div class="hotspot">
+            <span class="hotspot-number">05</span>
+            <img
+              src="https://images.unsplash.com/photo-1517649763962-0c623066013b?w=400&q=75"
+              alt="Athletics Track"
+              class="hotspot-img"
+            />
+            <div class="hotspot-name">Athletics Village</div>
+            <div class="hotspot-desc">
+              Cricket, football, tennis, padel, athletics — a sprawling sports
+              village for every body and every dream.
+            </div>
+          </div>
+          <div class="hotspot">
+            <span class="hotspot-number">06</span>
+            <img
+              src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&q=75"
+              alt="Nature Campus"
+              class="hotspot-img"
+            />
+            <div class="hotspot-name">Nature & Wellness</div>
+            <div class="hotspot-desc">
+              Forests, lakes, cycling tracks, meditation spaces, farming zones.
+              No child should feel trapped inside concrete.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: THE DAY — Clock + Scroll -->
+    <section id="the-day">
+      <div class="day-left">
+        <div class="clock-face">
+          <div class="clock-hand hour" id="hourHand"></div>
+          <div class="clock-hand minute" id="minuteHand"></div>
+          <div class="clock-dot"></div>
+          <div class="clock-inner">
+            <div class="clock-time" id="clockTime">06:00</div>
+          </div>
+        </div>
+        <div class="clock-label">A day at Playtara</div>
+      </div>
+      <div class="day-right" id="dayRight">
+        <div class="day-block active" data-time="06:00">
+          <div class="day-time">Dawn — 06:00</div>
+          <div class="day-text">The campus wakes before the world does.</div>
+          <div class="day-sub">
+            Morning movement, open fields, dew on grass. Children learn that the
+            body is the first instrument to tune.
+          </div>
+          <img
+            src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=75"
+            alt=""
+            class="day-img"
+            loading="lazy"
+          />
+        </div>
+        <div class="day-block" data-time="08:00">
+          <div class="day-time">Morning — 08:00</div>
+          <div class="day-text">
+            Four hours.<br />AI-personalized academics.
+          </div>
+          <div class="day-sub">
+            Tutored by the world's finest minds. Each child moves at their own
+            pace. No exams. No rankings. Pure curiosity.
+          </div>
+          <img
+            src="https://images.unsplash.com/photo-1497486751825-1233686d5d80?w=600&q=75"
+            alt=""
+            class="day-img"
+            loading="lazy"
+          />
+        </div>
+        <div class="day-block" data-time="13:00">
+          <div class="day-time">Afternoon — 13:00</div>
+          <div class="day-text">
+            The rest of the day<br />belongs to the body.
+          </div>
+          <div class="day-sub">
+            Sport, art, performance, creation. Every afternoon is a different
+            life lived in miniature.
+          </div>
+          <img
+            src="https://images.unsplash.com/photo-1544717297-fa95b6ee9643?w=600&q=75"
+            alt=""
+            class="day-img"
+            loading="lazy"
+          />
+        </div>
+        <div class="day-block" data-time="18:00">
+          <div class="day-time">Evening — 18:00</div>
+          <div class="day-text">
+            The art studios open<br />as the light softens.
+          </div>
+          <div class="day-sub">
+            Music rooms, theater stages, film editing suites. Creativity is not
+            a subject here. It is a way of breathing.
+          </div>
+          <img
+            src="https://images.unsplash.com/photo-1502209524164-acea936639a2?w=600&q=75"
+            alt=""
+            class="day-img"
+            loading="lazy"
+          />
+        </div>
+        <div class="day-block" data-time="21:00">
+          <div class="day-time">Night — 21:00</div>
+          <div class="day-text">
+            The dorms hold stories.<br />Letters home. Laughter.
+          </div>
+          <div class="day-sub">
+            Children are safe, known, and held — not housed. Sleep is also
+            education.
+          </div>
+          <img
+            src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=600&q=75"
+            alt=""
+            class="day-img"
+            loading="lazy"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: CHILD ECOSYSTEM — 5 Pillar Cards -->
+    <section id="ecosystem">
+      <div class="ecosystem-header">
+        <div class="ecosystem-eyebrow">The child ecosystem</div>
+        <h2 class="ecosystem-title">
+          Five dimensions<br />of <em>becoming</em>
+        </h2>
+        <p class="ecosystem-body">
+          A modern academy designed for the next generation — combining elite
+          sports infrastructure, future-focused education, AI-powered learning,
+          creativity, wellness, leadership, and real-world experiences in one
+          immersive campus.
+        </p>
+      </div>
+      <div class="pillars-grid">
+        <div class="pillar-card">
+          <div class="pillar-inner">
+            <span class="pillar-number">01</span>
+            <span class="pillar-icon">⚽</span>
+            <h3 class="pillar-name">Elite Sports<br />Culture</h3>
+            <div class="pillar-sep"></div>
+            <p class="pillar-desc">
+              Cricket, football, tennis, athletics, swimming, combat sports,
+              padel — movement becomes part of everyday life from the earliest
+              age.
+            </p>
+          </div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-inner">
+            <span class="pillar-number">02</span>
+            <span class="pillar-icon">🤖</span>
+            <h3 class="pillar-name">AI & Future<br />Learning</h3>
+            <div class="pillar-sep"></div>
+            <p class="pillar-desc">
+              Students learn with AI, not against it — robotics, coding,
+              creativity tools, and real-world problem solving from an early
+              age.
+            </p>
+          </div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-inner">
+            <span class="pillar-number">03</span>
+            <span class="pillar-icon">🌿</span>
+            <h3 class="pillar-name">Nature &<br />Wellness</h3>
+            <div class="pillar-sep"></div>
+            <p class="pillar-desc">
+              Open campuses, forests, recovery spaces, mindfulness, nutrition,
+              and healthy living woven into every corner of campus life.
+            </p>
+          </div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-inner">
+            <span class="pillar-number">04</span>
+            <span class="pillar-icon">🎨</span>
+            <h3 class="pillar-name">Creativity &<br />Expression</h3>
+            <div class="pillar-sep"></div>
+            <p class="pillar-desc">
+              Music, design, filmmaking, storytelling, public speaking — treated
+              as equally important as academics. The soul finds its voice.
+            </p>
+          </div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-inner">
+            <span class="pillar-number">05</span>
+            <span class="pillar-icon">🌍</span>
+            <h3 class="pillar-name">Real Life<br />Education</h3>
+            <div class="pillar-sep"></div>
+            <p class="pillar-desc">
+              Financial literacy, leadership, emotional intelligence, survival
+              skills, teamwork, and adaptability — real-world readiness from day
+              one.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATS BAR -->
+    <div id="stats-bar">
+      <div class="stat-item">
+        <span class="stat-num" data-target="250">0</span>
+        <span class="stat-label">Acres of Campus</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-target="50">0</span>
+        <span class="stat-label">Sports Available</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-target="100">0</span>
+        <span class="stat-label">Lives to Explore</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-target="2">0</span>
+        <span class="stat-label">Age to Begin</span>
+      </div>
+    </div>
+
+    <!-- SECTION 6: SPORTS LIST -->
+    <section id="sports-list">
+      <div class="sports-marquee-bg" aria-hidden="true">
+        <div class="marquee-track">
+          <span
+            >SPORTS &nbsp;&nbsp;&nbsp; MOVEMENT &nbsp;&nbsp;&nbsp; PLAY
+            &nbsp;&nbsp;&nbsp; RESILIENCE &nbsp;&nbsp;&nbsp; TEAMWORK
+            &nbsp;&nbsp;&nbsp; SPORTS &nbsp;&nbsp;&nbsp; MOVEMENT
+            &nbsp;&nbsp;&nbsp; PLAY &nbsp;&nbsp;&nbsp; RESILIENCE
+            &nbsp;&nbsp;&nbsp; TEAMWORK &nbsp;&nbsp;&nbsp;</span
+          >
+          <span
+            >SPORTS &nbsp;&nbsp;&nbsp; MOVEMENT &nbsp;&nbsp;&nbsp; PLAY
+            &nbsp;&nbsp;&nbsp; RESILIENCE &nbsp;&nbsp;&nbsp; TEAMWORK
+            &nbsp;&nbsp;&nbsp; SPORTS &nbsp;&nbsp;&nbsp; MOVEMENT
+            &nbsp;&nbsp;&nbsp; PLAY &nbsp;&nbsp;&nbsp; RESILIENCE
+            &nbsp;&nbsp;&nbsp; TEAMWORK &nbsp;&nbsp;&nbsp;</span
+          >
+        </div>
+      </div>
+      <div class="sports-header">
+        <div class="sports-eyebrow">The sports ecosystem</div>
+        <div class="sports-title">
+          Every Olympic discipline.<br />Every child's arena.
+        </div>
+      </div>
+      <div id="sportsRows"></div>
+    </section>
+
+    <!-- SECTION 7: FULLSCREEN PILLARS -->
+    <section id="pillars-full">
+      <div class="pillar-slide">
+        <div
+          class="pillar-bg"
+          style="
+            background-image: url(&quot;https://images.unsplash.com/photo-1517649763962-0c623066013b?w=1600&q=80&quot;);
+          "
+        ></div>
+        <div class="pillar-veil"></div>
+        <div class="pillar-slide-content">
+          <span class="pillar-word">Sport</span>
+          <div class="pillar-gold-line"></div>
+          <div class="pillar-poem">
+            The body as the first instrument of courage.
+          </div>
+        </div>
+      </div>
+      <div class="pillar-slide">
+        <div
+          class="pillar-bg"
+          style="
+            background-image: url(&quot;https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1600&q=80&quot;);
+          "
+        ></div>
+        <div class="pillar-veil"></div>
+        <div class="pillar-slide-content">
+          <span class="pillar-word">Art</span>
+          <div class="pillar-gold-line"></div>
+          <div class="pillar-poem">
+            To make something from nothing — the oldest human act.
+          </div>
+        </div>
+      </div>
+      <div class="pillar-slide">
+        <div
+          class="pillar-bg"
+          style="
+            background-image: url(&quot;https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=1600&q=80&quot;);
+          "
+        ></div>
+        <div class="pillar-veil"></div>
+        <div class="pillar-slide-content">
+          <span class="pillar-word">Intelligence</span>
+          <div class="pillar-gold-line"></div>
+          <div class="pillar-poem">
+            Not the accumulation of answers — the cultivation of questions.
+          </div>
+        </div>
+      </div>
+      <div class="pillar-slide">
+        <div
+          class="pillar-bg"
+          style="
+            background-image: url(&quot;https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1600&q=80&quot;);
+          "
+        ></div>
+        <div class="pillar-veil"></div>
+        <div class="pillar-slide-content">
+          <span class="pillar-word">Society</span>
+          <div class="pillar-gold-line"></div>
+          <div class="pillar-poem">
+            We raise children for each other, not just for themselves.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 8: CLOSING / FINAL WORD -->
+    <section id="closing">
+      <div class="closing-bg-text" aria-hidden="true">HUMAN</div>
+      <div class="closing-content">
+        <span class="closing-label">The Final Word</span>
+        <h2 class="closing-heading">
+          Confident.<br />
+          <em>Adaptable.</em><br />
+          Deeply Human.
+        </h2>
+        <div class="closing-divider"></div>
+        <p class="closing-text">
+          Playtara is not just a school. It is a living ecosystem designed to
+          help children become confident, healthy, expressive, future-ready, and
+          deeply human.
+        </p>
+        <div class="closing-cta-row">
+          <a href="#" class="cta-btn primary">Book a Campus Visit</a>
+          <a href="#" class="cta-btn">Explore Programs</a>
+          <a href="#" class="cta-btn">Join the Founding Community</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <span class="footer-mark">Playtara Academy</span>
+      <span class="footer-tagline"
+        >Sports · AI · Creativity · Human Potential</span
+      >
+      <div class="footer-legal">
+        <span>Privacy</span>
+        <span>Terms</span>
+        <span>Safeguarding Policy</span>
+      </div>
+    </footer>
+
+    <script>
+      gsap.registerPlugin(ScrollTrigger);
+
+      // ─── CURSOR ───
+      const dot = document.getElementById("cursor-dot");
+      const ring = document.getElementById("cursor-ring");
+      let mx = window.innerWidth / 2,
+        my = window.innerHeight / 2;
+      let rx = mx,
+        ry = my;
+
+      document.addEventListener("mousemove", (e) => {
+        mx = e.clientX;
+        my = e.clientY;
+        dot.style.left = mx + "px";
+        dot.style.top = my + "px";
+      });
+
+      function lerp(a, b, t) {
+        return a + (b - a) * t;
+      }
+      function animCursor() {
+        rx = lerp(rx, mx, 0.1);
+        ry = lerp(ry, my, 0.1);
+        ring.style.left = rx + "px";
+        ring.style.top = ry + "px";
+        requestAnimationFrame(animCursor);
+      }
+      animCursor();
+
+      // cursor changes on text elements
+      document
+        .querySelectorAll(
+          "h1,h2,h3,p,.manifesto-line,.pillar-word,.day-text,.closing-heading",
+        )
+        .forEach((el) => {
+          el.addEventListener("mouseenter", () =>
+            document.body.classList.add("cursor-text"),
+          );
+          el.addEventListener("mouseleave", () =>
+            document.body.classList.remove("cursor-text"),
+          );
+        });
+      document
+        .querySelectorAll("a,button,.hotspot,.sport-row,.pillar-card,.cta-btn")
+        .forEach((el) => {
+          el.addEventListener("mouseenter", () =>
+            document.body.classList.add("cursor-hover"),
+          );
+          el.addEventListener("mouseleave", () =>
+            document.body.classList.remove("cursor-hover"),
+          );
+        });
+
+      // ─── LOADER ───
+      const loaderWord = document.getElementById("loaderWord");
+      const loaderLine = document.getElementById("loaderLine");
+      const loaderAcademy = document.getElementById("loaderAcademy");
+
+      // Step 1: fade in the word
+      setTimeout(() => {
+        loaderWord.style.opacity = "1";
+      }, 100);
+
+      // Step 2: expand the line
+      setTimeout(() => {
+        loaderLine.style.width = "220px";
+      }, 500);
+
+      // Step 3: show ACADEMY
+      setTimeout(() => {
+        loaderAcademy.style.opacity = "1";
+      }, 900);
+
+      // Step 4: hide loader and start hero reveal
+      setTimeout(() => {
+        document.getElementById("loader").classList.add("hidden");
+        revealHero();
+      }, 1800);
+
+      function revealHero() {
+        document.getElementById("arrivalBg").classList.add("revealed");
+        document.getElementById("arrivalTagline").classList.add("visible");
+        document.getElementById("scrollHint").classList.add("visible");
+        document.getElementById("nav").classList.add("visible");
+      }
+
+      // ─── NAV: show on scroll + scrolled style ───
+      const nav = document.getElementById("nav");
+      window.addEventListener(
+        "scroll",
+        () => {
+          nav.classList.toggle("scrolled", window.scrollY > 80);
+        },
+        { passive: true },
+      );
+
+      // ─── MANIFESTO SCRUB ───
+      const mLines = [
+        document.getElementById("mLine1"),
+        document.getElementById("mLine2"),
+        document.getElementById("mLine3"),
+      ];
+      let currentLine = -1;
+
+      function setManifestoLine(idx) {
+        // idx === -1 means no line active (entry/exit dead-zones)
+        if (idx === currentLine) return;
+        mLines.forEach((l, i) => {
+          l.classList.remove("active", "exiting");
+          if (i === idx) {
+            l.classList.add("active");
+          } else if (i === currentLine && currentLine !== -1) {
+            l.classList.add("exiting");
+            setTimeout(() => l.classList.remove("exiting"), 800);
+          }
+        });
+        currentLine = idx;
+      }
+
+      const manifesto = document.getElementById("manifesto");
+      window.addEventListener(
+        "scroll",
+        () => {
+          const rect = manifesto.getBoundingClientRect();
+          const sectionHeight = manifesto.offsetHeight - window.innerHeight;
+          const scrolled = -rect.top;
+          const progress = Math.max(0, Math.min(1, scrolled / sectionHeight));
+
+          // Divide progress into equal windows per line, with a small buffer
+          // so lines enter smoothly and the last one fully exits before section ends.
+          // Layout: [0 - 0.08] = entry buffer, [0.08 - 0.92] = 3 lines, [0.92 - 1] = exit buffer
+          const innerProgress = (progress - 0.06) / (1 - 0.12);
+          const clampedInner = Math.max(0, Math.min(1, innerProgress));
+          const segmentSize = 1 / mLines.length; // ~0.333 each
+
+          let lineIdx = -1;
+          if (progress > 0.06 && progress < 0.94) {
+            lineIdx = Math.min(
+              mLines.length - 1,
+              Math.floor(clampedInner / segmentSize),
+            );
+          }
+
+          setManifestoLine(lineIdx);
+        },
+        { passive: true },
+      );
+
+      // Manifesto bg text scroll parallax
+      gsap.to("#manifestoBgText", {
+        x: "-20%",
+        ease: "none",
+        scrollTrigger: {
+          trigger: "#manifesto",
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 1,
+        },
+      });
+
+      // ─── INTERSECTION OBSERVER FOR REVEAL ELEMENTS ───
+      const revealObs = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add("visible");
+              revealObs.unobserve(e.target);
+            }
+          });
+        },
+        { threshold: 0.15 },
+      );
+
+      document
+        .querySelectorAll(
+          ".acres-eyebrow,.acres-title,.ecosystem-eyebrow,.ecosystem-title,.ecosystem-body," +
+            ".sports-eyebrow,.sports-title,.closing-label,.closing-heading,.closing-divider,.closing-text,.closing-cta-row",
+        )
+        .forEach((el) => revealObs.observe(el));
+
+      // ─── HOTSPOTS REVEAL ───
+      gsap.from(".hotspot", {
+        y: 40,
+        opacity: 0,
+        stagger: 0.1,
+        duration: 1,
+        ease: "power3.out",
+        scrollTrigger: { trigger: ".hotspots-grid", start: "top 80%" },
+      });
+
+      // ─── PILLAR CARDS STAGGER ───
+      const pillarCards = document.querySelectorAll(".pillar-card");
+      const pillarObs = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting) {
+            pillarCards.forEach((c, i) => {
+              setTimeout(() => c.classList.add("visible"), i * 100);
+            });
+            pillarObs.disconnect();
+          }
+        },
+        { threshold: 0.2 },
+      );
+      if (document.querySelector(".pillars-grid"))
+        pillarObs.observe(document.querySelector(".pillars-grid"));
+
+      // ─── THE DAY — CLOCK ───
+      const clockTime = document.getElementById("clockTime");
+      const hourHand = document.getElementById("hourHand");
+      const minuteHand = document.getElementById("minuteHand");
+      const dayBlocks = document.querySelectorAll(".day-block");
+      const times = ["06:00", "08:00", "13:00", "18:00", "21:00"];
+      const hourDeg = [0, 60, 150, 210, 270];
+      const daySection = document.getElementById("the-day");
+      const dayRight = document.getElementById("dayRight");
+
+      window.addEventListener(
+        "scroll",
+        () => {
+          if (!dayRight) return;
+          const rightRect = dayRight.getBoundingClientRect();
+          const scrolled = -rightRect.top + window.innerHeight * 0.3;
+          const blockH = rightRect.height / dayBlocks.length;
+
+          dayBlocks.forEach((b, i) => {
+            const blockTop = blockH * i;
+            const active = scrolled >= blockTop && scrolled < blockTop + blockH;
+            b.classList.toggle("active", active);
+            if (active) {
+              clockTime.textContent = times[i];
+              hourHand.style.transform = `translateX(-50%) rotate(${hourDeg[i]}deg)`;
+              minuteHand.style.transform = `translateX(-50%) rotate(${hourDeg[i] * 2}deg)`;
+            }
+          });
+        },
+        { passive: true },
+      );
+
+      // ─── SPORTS ROWS ───
+      const sportsData = [
+        {
+          name: "Cricket",
+          tag: "National Game",
+          img: "https://images.unsplash.com/photo-1560174038-da43ac74f01b?w=400&q=70",
+        },
+        {
+          name: "Football",
+          tag: "The Beautiful Game",
+          img: "https://images.unsplash.com/photo-1554151228-14d9def656e4?w=400&q=70",
+        },
+        {
+          name: "Swimming",
+          tag: "Olympic Pool",
+          img: "https://images.unsplash.com/photo-1565992441121-4367f2fdefcc?w=400&q=70",
+        },
+        {
+          name: "Tennis",
+          tag: "Precision & Power",
+          img: "https://images.unsplash.com/photo-1529916064-9caac4d46b5b?w=400&q=70",
+        },
+        {
+          name: "Archery",
+          tag: "Stillness as Power",
+          img: "https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=400&q=70",
+        },
+        {
+          name: "Chess",
+          tag: "Mind Sport",
+          img: "https://images.unsplash.com/photo-1560174038-da43ac74f01b?w=400&q=70",
+        },
+        {
+          name: "Athletics",
+          tag: "Track & Field",
+          img: "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=400&q=70",
+        },
+        {
+          name: "Gymnastics",
+          tag: "Grace & Power",
+          img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=70",
+        },
+        {
+          name: "Padel",
+          tag: "Emerging Global",
+          img: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&q=70",
+        },
+        {
+          name: "Judo",
+          tag: "Martial Arts",
+          img: "https://images.unsplash.com/photo-1555597673-b21d5c935865?w=400&q=70",
+        },
+        {
+          name: "Equestrian",
+          tag: "Partnership",
+          img: "https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?w=400&q=70",
+        },
+        {
+          name: "Sailing",
+          tag: "Wind & Water",
+          img: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&q=70",
+        },
+      ];
+
+      const sportsContainer = document.getElementById("sportsRows");
+      sportsData.forEach((s, i) => {
+        const row = document.createElement("div");
+        row.className = "sport-row";
+        row.innerHTML = `
+    <div class="sport-num">0${i + 1}</div>
+    <div class="sport-name">${s.name}</div>
+    <div class="sport-thumb"><img src="${s.img}" alt="${s.name}" loading="lazy"></div>
+  `;
+        sportsContainer.appendChild(row);
+        // cursor hover
+        row.addEventListener("mouseenter", () =>
+          document.body.classList.add("cursor-hover"),
+        );
+        row.addEventListener("mouseleave", () =>
+          document.body.classList.remove("cursor-hover"),
+        );
+      });
+
+      gsap.from(".sport-row", {
+        x: -30,
+        opacity: 0,
+        stagger: 0.06,
+        duration: 0.9,
+        ease: "power3.out",
+        scrollTrigger: { trigger: "#sports-list", start: "top 75%" },
+      });
+
+      // ─── PILLAR FULLSCREEN BG REVEAL ───
+      document.querySelectorAll(".pillar-slide").forEach((slide) => {
+        const obs = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) {
+                e.target.querySelector(".pillar-bg").style.transform =
+                  "scale(1.0)";
+              }
+            });
+          },
+          { threshold: 0.3 },
+        );
+        obs.observe(slide);
+      });
+
+      // ─── STATS COUNTER ───
+      let statsAnimated = false;
+      const statsBar = document.getElementById("stats-bar");
+      const statsObs = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting && !statsAnimated) {
+            statsAnimated = true;
+            document.querySelectorAll(".stat-num").forEach((el) => {
+              const target = parseInt(el.getAttribute("data-target"));
+              let current = 0;
+              const step = target / 60;
+              const timer = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                  current = target;
+                  clearInterval(timer);
+                }
+                el.textContent =
+                  Math.floor(current) +
+                  (target === 250 ? "" : target === 2 ? "" : "+");
+              }, 25);
+            });
+            statsObs.disconnect();
+          }
+        },
+        { threshold: 0.5 },
+      );
+      if (statsBar) statsObs.observe(statsBar);
+
+      // ─── ARRIVAL PARALLAX ───
+      gsap.to("#arrivalBg", {
+        yPercent: 20,
+        ease: "none",
+        scrollTrigger: {
+          trigger: "#arrival",
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+      gsap.to(".arrival-title", {
+        yPercent: -15,
+        opacity: 0,
+        ease: "none",
+        scrollTrigger: {
+          trigger: "#arrival",
+          start: "30% top",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+
+      // ─── CLOSING BG TEXT PARALLAX ───
+      gsap.to(".closing-bg-text", {
+        y: "-12%",
+        ease: "none",
+        scrollTrigger: {
+          trigger: "#closing",
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 1,
+        },
+      });
+    </script>
+  </body>
+</html>
