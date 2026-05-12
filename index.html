@@ -572,67 +572,110 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        background: var(--navy);
-        padding: 4rem;
+        background: #0a0a0a;
+        padding: 3rem 2.5rem 2.5rem;
+        border-right: 1px solid rgba(201, 169, 110, 0.12);
+        overflow: hidden;
       }
-      .clock-face {
-        width: min(280px, 40vw);
-        height: min(280px, 40vw);
-        border-radius: 50%;
-        border: 1px solid rgba(201, 169, 110, 0.3);
-        position: relative;
-        margin-bottom: 2rem;
-      }
-      .clock-inner {
-        position: absolute;
-        inset: 12px;
-        border-radius: 50%;
-        border: 1px solid rgba(201, 169, 110, 0.15);
+
+      /* SVG clock wrapper */
+      .clock-wrap {
         display: flex;
+        flex-direction: column;
         align-items: center;
-        justify-content: center;
+        gap: 1.4rem;
+        position: relative;
+        z-index: 2;
       }
+
+      /* The SVG clock face */
+      .clock-svg {
+        width: 200px;
+        height: 200px;
+        filter: drop-shadow(0 0 18px rgba(201, 169, 110, 0.12));
+        flex-shrink: 0;
+      }
+
+      /* Clock hands — positioned inside SVG via transform-origin at center (100 100) */
+      #hourHand {
+        transform-origin: 100px 100px;
+        transform: rotate(0deg);
+        transition: transform 0.9s cubic-bezier(0.6, 0.05, 0.1, 0.9);
+      }
+      #minuteHand {
+        transform-origin: 100px 100px;
+        transform: rotate(0deg);
+        transition: transform 0.9s cubic-bezier(0.6, 0.05, 0.1, 0.9);
+      }
+
+      /* Time readout */
       .clock-time {
         font-family: var(--serif);
-        font-size: 2.2rem;
+        font-size: 2rem;
         font-weight: 300;
-        color: var(--cream);
-        letter-spacing: 0.05em;
+        color: var(--gold);
+        letter-spacing: 0.1em;
+        line-height: 1;
       }
-      .clock-hand {
-        position: absolute;
-        bottom: 50%;
-        left: 50%;
-        width: 1px;
-        transform-origin: bottom center;
-        background: var(--gold);
-        transition: transform 0.8s cubic-bezier(0.6, 0.05, 0.1, 0.9);
-      }
-      .clock-hand.hour {
-        height: 28%;
-        transform: translateX(-50%) rotate(0deg);
-      }
-      .clock-hand.minute {
-        height: 38%;
-        transform: translateX(-50%) rotate(0deg);
-        opacity: 0.6;
-      }
+
+      /* Label */
       .clock-label {
         font-family: var(--sans);
-        font-size: 0.65rem;
-        letter-spacing: 0.2em;
+        font-size: 0.68rem;
+        letter-spacing: 0.18em;
         text-transform: uppercase;
-        color: rgba(244, 239, 230, 0.35);
+        color: rgba(201, 169, 110, 0.45);
+        margin-top: 0.1rem;
       }
-      .clock-dot {
+
+      /* Active period echo word */
+      .day-echo {
+        font-family: var(--serif);
+        font-size: clamp(3rem, 5vw, 4.5rem);
+        font-weight: 200;
+        color: rgba(201, 169, 110, 0.07);
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        line-height: 1;
+        margin-top: 2.2rem;
+        text-align: center;
+        user-select: none;
+        transition: opacity 0.6s ease;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Vertical progress bar */
+      .day-progress-track {
         position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background: var(--gold);
-        transform: translate(-50%, -50%);
+        right: 0;
+        top: 0;
+        width: 2px;
+        height: 100%;
+        background: rgba(201, 169, 110, 0.08);
+        z-index: 5;
+      }
+      .day-progress-fill {
+        width: 100%;
+        height: 0%;
+        background: linear-gradient(to bottom, rgba(201, 169, 110, 0.6), rgba(201, 169, 110, 0.2));
+        transition: height 0.5s ease;
+      }
+
+      /* Poetic line at the bottom */
+      .day-poetic {
+        position: absolute;
+        bottom: 2rem;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-family: var(--serif);
+        font-size: 0.68rem;
+        font-style: italic;
+        color: rgba(201, 169, 110, 0.28);
+        letter-spacing: 0.06em;
+        padding: 0 2rem;
+        z-index: 2;
       }
       .day-right {
         padding: 8rem 4rem;
@@ -920,150 +963,238 @@
         margin: 1.8rem auto;
       }
 
-      /* ─── SPORTS ROWS ─── */
+      /* ─── SPORTS CAROUSEL ─── */
       #sports-list {
         background: var(--navy-deep);
-        padding: 8rem 0;
+        padding: 9rem 0 8rem;
         position: relative;
         overflow: hidden;
       }
+
+      /* Ghost wordmark watermark */
       .sports-marquee-bg {
         position: absolute;
-        top: 0;
+        top: 50%;
         left: 0;
         right: 0;
+        transform: translateY(-50%);
         font-family: var(--serif);
         font-size: clamp(6rem, 15vw, 15rem);
         font-weight: 600;
-        color: rgba(201, 169, 110, 0.04);
+        color: rgba(201, 169, 110, 0.025);
         white-space: nowrap;
         overflow: hidden;
         line-height: 1;
         pointer-events: none;
         display: flex;
         gap: 4rem;
+        user-select: none;
       }
       .marquee-track {
         display: flex;
         gap: 4rem;
-        animation: marqueeScroll 30s linear infinite;
+        animation: marqueeScroll 40s linear infinite;
         white-space: nowrap;
       }
       @keyframes marqueeScroll {
-        from {
-          transform: translateX(0);
-        }
-        to {
-          transform: translateX(-50%);
-        }
+        from { transform: translateX(0); }
+        to   { transform: translateX(-50%); }
       }
+
+      /* ── Header ── */
       .sports-header {
-        padding: 0 4rem;
+        padding: 0 clamp(2rem, 6vw, 8rem);
         margin-bottom: 5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
       }
       .sports-eyebrow {
         font-family: var(--sans);
         font-size: 0.65rem;
-        letter-spacing: 0.3em;
+        letter-spacing: 0.35em;
         text-transform: uppercase;
         color: var(--gold);
-        margin-bottom: 1rem;
+        margin-bottom: 1.2rem;
         opacity: 0;
         transform: translateY(20px);
-        transition:
-          opacity 1s,
-          transform 1s;
+        transition: opacity 0.9s cubic-bezier(0.4,0,0.2,1),
+                    transform 0.9s cubic-bezier(0.4,0,0.2,1);
       }
-      .sports-eyebrow.visible {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      .sports-eyebrow.visible { opacity: 1; transform: translateY(0); }
       .sports-title {
         font-family: var(--serif);
-        font-size: clamp(2.5rem, 5vw, 5rem);
+        font-size: clamp(2.8rem, 5.5vw, 5.5rem);
         font-weight: 300;
         color: var(--cream);
-        max-width: 600px;
-        line-height: 1.1;
+        max-width: 680px;
+        line-height: 1.08;
+        letter-spacing: -0.01em;
         opacity: 0;
-        transform: translateY(30px);
-        transition:
-          opacity 1.2s 0.1s,
-          transform 1.2s 0.1s;
+        transform: translateY(32px);
+        transition: opacity 1.1s 0.12s cubic-bezier(0.4,0,0.2,1),
+                    transform 1.1s 0.12s cubic-bezier(0.4,0,0.2,1);
       }
-      .sports-title.visible {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      .sport-row {
-        display: grid;
-        grid-template-columns: 80px 1fr 320px;
-        align-items: center;
-        border-top: 1px solid rgba(244, 239, 230, 0.07);
-        padding: 0 4rem;
-        cursor: none;
-        transition: background 0.5s;
-        overflow: hidden;
-        position: relative;
-      }
-      .sport-row::after {
-        content: "View ↗";
-        position: absolute;
-        right: 4rem;
-        font-family: var(--sans);
-        font-size: 0.6rem;
-        letter-spacing: 0.15em;
-        text-transform: uppercase;
-        color: rgba(201, 169, 110, 0);
-        transition: color 0.4s;
-      }
-      .sport-row:hover::after {
-        color: rgba(201, 169, 110, 0.5);
-      }
-      .sport-row:last-child {
-        border-bottom: 1px solid rgba(244, 239, 230, 0.07);
-      }
-      .sport-row:hover {
-        background: rgba(45, 74, 62, 0.12);
-      }
-      .sport-num {
-        font-family: var(--serif);
-        font-size: 0.75rem;
-        color: rgba(201, 169, 110, 0.3);
-        letter-spacing: 0.1em;
-        padding: 2rem 0;
-      }
-      .sport-name {
-        font-family: var(--serif);
-        font-size: clamp(1.6rem, 3vw, 2.8rem);
-        font-weight: 300;
-        color: var(--cream);
-        padding: 1.5rem 2rem;
-        transition: color 0.4s;
-        letter-spacing: 0.02em;
-      }
-      .sport-row:hover .sport-name {
+      .sports-title.visible { opacity: 1; transform: translateY(0); }
+      .sports-title em {
+        font-style: italic;
         color: var(--gold-light);
       }
-      .sport-thumb {
-        width: 100%;
-        height: 0;
+
+      /* ── Carousel wrapper ── */
+      .sports-carousel-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 1.6rem;
+        padding: 0.5rem 0;
+      }
+
+      /* ── Each ticker row ── */
+      .sports-ticker-row {
         overflow: hidden;
-        transition: height 0.6s cubic-bezier(0.6, 0.05, 0.1, 0.9);
         position: relative;
       }
-      .sport-row:hover .sport-thumb {
-        height: 90px;
-      }
-      .sport-thumb img {
-        width: 100%;
-        height: 90px;
-        object-fit: cover;
-        filter: brightness(0.7) saturate(0.8);
+      /* Fade edges */
+      .sports-ticker-row::before,
+      .sports-ticker-row::after {
+        content: "";
         position: absolute;
-        bottom: 0;
-        left: 0;
+        top: 0; bottom: 0;
+        width: clamp(80px, 10vw, 160px);
+        z-index: 2;
+        pointer-events: none;
       }
+      .sports-ticker-row::before {
+        left: 0;
+        background: linear-gradient(to right, var(--navy-deep) 0%, transparent 100%);
+      }
+      .sports-ticker-row::after {
+        right: 0;
+        background: linear-gradient(to left, var(--navy-deep) 0%, transparent 100%);
+      }
+
+      .sports-ticker-track {
+        display: flex;
+        gap: 1.4rem;
+        width: max-content;
+        will-change: transform;
+      }
+      .sports-ticker-track.reverse {
+        /* JS handles direction via CSS var */
+      }
+
+      /* ── Individual sport card ── */
+      .sport-card {
+        position: relative;
+        flex-shrink: 0;
+        width: clamp(200px, 22vw, 320px);
+        height: clamp(260px, 28vw, 400px);
+        border-radius: 12px;
+        overflow: hidden;
+        cursor: none;
+        isolation: isolate;
+      }
+      .sport-card-img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.8s cubic-bezier(0.4,0,0.2,1),
+                    filter 0.8s cubic-bezier(0.4,0,0.2,1);
+        filter: brightness(0.55) saturate(0.75);
+        transform: scale(1.04);
+      }
+      .sport-card:hover .sport-card-img {
+        transform: scale(1.10);
+        filter: brightness(0.65) saturate(0.9);
+      }
+
+      /* Gradient veil */
+      .sport-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          160deg,
+          transparent 30%,
+          rgba(4, 14, 30, 0.7) 100%
+        );
+        z-index: 1;
+        transition: opacity 0.6s;
+      }
+
+      /* Shimmer sweep on hover */
+      .sport-card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          105deg,
+          transparent 35%,
+          rgba(201,169,110,0.10) 50%,
+          transparent 65%
+        );
+        transform: translateX(-100%);
+        z-index: 3;
+        transition: transform 0s;
+        pointer-events: none;
+      }
+      .sport-card:hover::after {
+        transform: translateX(100%);
+        transition: transform 0.7s cubic-bezier(0.4,0,0.2,1);
+      }
+
+      /* Content layer */
+      .sport-card-body {
+        position: absolute;
+        bottom: 0; left: 0; right: 0;
+        padding: 1.6rem 1.5rem 1.4rem;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        transform: translateY(4px);
+        transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+      }
+      .sport-card:hover .sport-card-body {
+        transform: translateY(0);
+      }
+      .sport-card-tag {
+        font-family: var(--sans);
+        font-size: 0.58rem;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: var(--gold);
+        opacity: 0.85;
+        transition: opacity 0.4s;
+      }
+      .sport-card:hover .sport-card-tag { opacity: 1; }
+      .sport-card-name {
+        font-family: var(--serif);
+        font-size: clamp(1.3rem, 2vw, 1.8rem);
+        font-weight: 300;
+        color: var(--cream);
+        line-height: 1.1;
+        letter-spacing: 0.01em;
+      }
+      .sport-card-arrow {
+        font-size: 0.65rem;
+        letter-spacing: 0.1em;
+        font-family: var(--sans);
+        color: rgba(201,169,110, 0);
+        transition: color 0.4s 0.05s, transform 0.4s;
+        transform: translateX(-6px);
+        align-self: flex-start;
+        margin-top: 0.2rem;
+      }
+      .sport-card:hover .sport-card-arrow {
+        color: var(--gold);
+        transform: translateX(0);
+      }
+
+      /* Ticker pause is handled via JS rAF speed lerp */
 
       /* ─── STATS ─── */
       #stats-bar {
@@ -1431,18 +1562,6 @@
         .pillars-grid {
           grid-template-columns: repeat(2, 1fr);
         }
-        .sport-row {
-          grid-template-columns: 50px 1fr;
-          cursor: pointer;
-          padding: 0 1.5rem;
-        }
-        .sport-row::after {
-          right: 1.5rem;
-          color: rgba(201, 169, 110, 0.35);
-        }
-        .sport-thumb {
-          display: none;
-        }
         #stats-bar {
           flex-direction: column;
           gap: 4rem;
@@ -1466,6 +1585,10 @@
         }
         .sports-header {
           padding: 0 1.5rem;
+        }
+        .sport-card {
+          width: clamp(150px, 42vw, 220px);
+          height: clamp(200px, 55vw, 290px);
         }
       }
     </style>
@@ -1654,15 +1777,65 @@
     <!-- SECTION 4: THE DAY — Clock + Scroll -->
     <section id="the-day">
       <div class="day-left">
-        <div class="clock-face">
-          <div class="clock-hand hour" id="hourHand"></div>
-          <div class="clock-hand minute" id="minuteHand"></div>
-          <div class="clock-dot"></div>
-          <div class="clock-inner">
-            <div class="clock-time" id="clockTime">06:00</div>
-          </div>
+        <!-- Vertical progress bar on right edge -->
+        <div class="day-progress-track">
+          <div class="day-progress-fill" id="dayProgressFill"></div>
         </div>
-        <div class="clock-label">A day at Playtara</div>
+
+        <div class="clock-wrap">
+          <!-- Time readout above clock -->
+          <div class="clock-time" id="clockTime">06:00</div>
+
+          <!-- Premium SVG analog clock -->
+          <svg class="clock-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <!-- Outer bezel -->
+            <circle cx="100" cy="100" r="97" fill="#0d0d0d" stroke="#c9a84c" stroke-width="0.8" opacity="1"/>
+            <!-- Inner hairline ring -->
+            <circle cx="100" cy="100" r="87" fill="none" stroke="#c9a84c" stroke-width="0.3" opacity="0.25"/>
+
+            <!-- 12 tick marks: 4 major (12/3/6/9), 8 minor -->
+            <!-- Major ticks (length 10, stroke 1.4) -->
+            <line x1="100" y1="6"  x2="100" y2="18" stroke="#c9a84c" stroke-width="1.4" stroke-linecap="round"/>
+            <line x1="100" y1="6"  x2="100" y2="18" stroke="#c9a84c" stroke-width="1.4" stroke-linecap="round" transform="rotate(90 100 100)"/>
+            <line x1="100" y1="6"  x2="100" y2="18" stroke="#c9a84c" stroke-width="1.4" stroke-linecap="round" transform="rotate(180 100 100)"/>
+            <line x1="100" y1="6"  x2="100" y2="18" stroke="#c9a84c" stroke-width="1.4" stroke-linecap="round" transform="rotate(270 100 100)"/>
+            <!-- Minor ticks (length 6, stroke 0.7) -->
+            <line x1="100" y1="6"  x2="100" y2="14" stroke="#c9a84c" stroke-width="0.7" stroke-linecap="round" transform="rotate(30 100 100)"/>
+            <line x1="100" y1="6"  x2="100" y2="14" stroke="#c9a84c" stroke-width="0.7" stroke-linecap="round" transform="rotate(60 100 100)"/>
+            <line x1="100" y1="6"  x2="100" y2="14" stroke="#c9a84c" stroke-width="0.7" stroke-linecap="round" transform="rotate(120 100 100)"/>
+            <line x1="100" y1="6"  x2="100" y2="14" stroke="#c9a84c" stroke-width="0.7" stroke-linecap="round" transform="rotate(150 100 100)"/>
+            <line x1="100" y1="6"  x2="100" y2="14" stroke="#c9a84c" stroke-width="0.7" stroke-linecap="round" transform="rotate(210 100 100)"/>
+            <line x1="100" y1="6"  x2="100" y2="14" stroke="#c9a84c" stroke-width="0.7" stroke-linecap="round" transform="rotate(240 100 100)"/>
+            <line x1="100" y1="6"  x2="100" y2="14" stroke="#c9a84c" stroke-width="0.7" stroke-linecap="round" transform="rotate(300 100 100)"/>
+            <line x1="100" y1="6"  x2="100" y2="14" stroke="#c9a84c" stroke-width="0.7" stroke-linecap="round" transform="rotate(330 100 100)"/>
+
+            <!-- Hour hand: thick, tapered, short -->
+            <line id="hourHand"
+              x1="100" y1="100"
+              x2="100" y2="52"
+              stroke="#c9a84c" stroke-width="3" stroke-linecap="round"
+              opacity="1"/>
+
+            <!-- Minute hand: thinner, longer -->
+            <line id="minuteHand"
+              x1="100" y1="100"
+              x2="100" y2="30"
+              stroke="#c9a84c" stroke-width="1.6" stroke-linecap="round"
+              opacity="0.75"/>
+
+            <!-- Center jewel dot -->
+            <circle cx="100" cy="100" r="4" fill="#c9a84c"/>
+            <circle cx="100" cy="100" r="2" fill="#0d0d0d"/>
+          </svg>
+
+          <div class="clock-label">A day at Playtara</div>
+        </div>
+
+        <!-- Active period echo -->
+        <div class="day-echo" id="dayEcho">Dawn</div>
+
+        <!-- Poetic line pinned to bottom -->
+        <div class="day-poetic">Every hour, shaped with intention.</div>
       </div>
       <div class="day-right" id="dayRight">
         <div class="day-block active" data-time="06:00">
@@ -1847,33 +2020,28 @@
       </div>
     </div>
 
-    <!-- SECTION 6: SPORTS LIST -->
+    <!-- SECTION 6: SPORTS CAROUSEL -->
     <section id="sports-list">
       <div class="sports-marquee-bg" aria-hidden="true">
         <div class="marquee-track">
-          <span
-            >SPORTS &nbsp;&nbsp;&nbsp; MOVEMENT &nbsp;&nbsp;&nbsp; PLAY
-            &nbsp;&nbsp;&nbsp; RESILIENCE &nbsp;&nbsp;&nbsp; TEAMWORK
-            &nbsp;&nbsp;&nbsp; SPORTS &nbsp;&nbsp;&nbsp; MOVEMENT
-            &nbsp;&nbsp;&nbsp; PLAY &nbsp;&nbsp;&nbsp; RESILIENCE
-            &nbsp;&nbsp;&nbsp; TEAMWORK &nbsp;&nbsp;&nbsp;</span
-          >
-          <span
-            >SPORTS &nbsp;&nbsp;&nbsp; MOVEMENT &nbsp;&nbsp;&nbsp; PLAY
-            &nbsp;&nbsp;&nbsp; RESILIENCE &nbsp;&nbsp;&nbsp; TEAMWORK
-            &nbsp;&nbsp;&nbsp; SPORTS &nbsp;&nbsp;&nbsp; MOVEMENT
-            &nbsp;&nbsp;&nbsp; PLAY &nbsp;&nbsp;&nbsp; RESILIENCE
-            &nbsp;&nbsp;&nbsp; TEAMWORK &nbsp;&nbsp;&nbsp;</span
-          >
+          <span>SPORTS &nbsp;&nbsp;&nbsp; MOVEMENT &nbsp;&nbsp;&nbsp; PLAY &nbsp;&nbsp;&nbsp; RESILIENCE &nbsp;&nbsp;&nbsp; TEAMWORK &nbsp;&nbsp;&nbsp; SPORTS &nbsp;&nbsp;&nbsp; MOVEMENT &nbsp;&nbsp;&nbsp; PLAY &nbsp;&nbsp;&nbsp; RESILIENCE &nbsp;&nbsp;&nbsp; TEAMWORK &nbsp;&nbsp;&nbsp;</span>
+          <span>SPORTS &nbsp;&nbsp;&nbsp; MOVEMENT &nbsp;&nbsp;&nbsp; PLAY &nbsp;&nbsp;&nbsp; RESILIENCE &nbsp;&nbsp;&nbsp; TEAMWORK &nbsp;&nbsp;&nbsp; SPORTS &nbsp;&nbsp;&nbsp; MOVEMENT &nbsp;&nbsp;&nbsp; PLAY &nbsp;&nbsp;&nbsp; RESILIENCE &nbsp;&nbsp;&nbsp; TEAMWORK &nbsp;&nbsp;&nbsp;</span>
         </div>
       </div>
       <div class="sports-header">
         <div class="sports-eyebrow">The sports ecosystem</div>
         <div class="sports-title">
-          Every Olympic discipline.<br />Every child's arena.
+          Every Olympic discipline.<br /><em>Every child's arena.</em>
         </div>
       </div>
-      <div id="sportsRows"></div>
+      <div class="sports-carousel-wrap">
+        <div class="sports-ticker-row">
+          <div class="sports-ticker-track" id="tickerRow1"></div>
+        </div>
+        <div class="sports-ticker-row">
+          <div class="sports-ticker-track reverse" id="tickerRow2"></div>
+        </div>
+      </div>
     </section>
 
     <!-- SECTION 7: FULLSCREEN PILLARS -->
@@ -2032,7 +2200,7 @@
             );
           });
         document
-          .querySelectorAll("a,button,.hotspot,.sport-row,.pillar-card,.cta-btn")
+          .querySelectorAll("a,button,.hotspot,.sport-card,.pillar-card,.cta-btn")
           .forEach((el) => {
             el.addEventListener("mouseenter", () =>
               document.body.classList.add("cursor-hover"),
@@ -2218,9 +2386,12 @@
       const clockTime = document.getElementById("clockTime");
       const hourHand = document.getElementById("hourHand");
       const minuteHand = document.getElementById("minuteHand");
+      const dayEcho = document.getElementById("dayEcho");
+      const dayProgressFill = document.getElementById("dayProgressFill");
       const dayBlocks = document.querySelectorAll(".day-block");
       const times = ["06:00", "08:00", "13:00", "18:00", "21:00"];
       const hourDeg = [0, 60, 150, 210, 270];
+      const echoWords = ["Dawn", "Morning", "Afternoon", "Evening", "Night"];
       const daySection = document.getElementById("the-day");
       const dayRight = document.getElementById("dayRight");
 
@@ -2230,7 +2401,14 @@
           if (!dayRight) return;
           const rightRect = dayRight.getBoundingClientRect();
           const scrolled = -rightRect.top + window.innerHeight * 0.3;
-          const blockH = rightRect.height / dayBlocks.length;
+          const totalH = rightRect.height;
+          const blockH = totalH / dayBlocks.length;
+
+          // Progress bar fill
+          if (dayProgressFill) {
+            const pct = Math.max(0, Math.min(100, (scrolled / totalH) * 100));
+            dayProgressFill.style.height = pct + "%";
+          }
 
           dayBlocks.forEach((b, i) => {
             const blockTop = blockH * i;
@@ -2238,76 +2416,34 @@
             b.classList.toggle("active", active);
             if (active) {
               clockTime.textContent = times[i];
-              hourHand.style.transform = `translateX(-50%) rotate(${hourDeg[i]}deg)`;
-              minuteHand.style.transform = `translateX(-50%) rotate(${hourDeg[i] * 2}deg)`;
+              // SVG hands rotate around their center (transform-origin set via CSS)
+              hourHand.style.transform = `rotate(${hourDeg[i]}deg)`;
+              minuteHand.style.transform = `rotate(${hourDeg[i] * 2}deg)`;
+              if (dayEcho) dayEcho.textContent = echoWords[i];
             }
           });
         },
         { passive: true },
       );
 
-      // ─── SPORTS ROWS ───
+      // ─── SPORTS CAROUSEL ───
       const sportsData = [
-        {
-          name: "Cricket",
-          tag: "National Game",
-          img: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=900&q=80&auto=format&fit=crop",
-        },
-        {
-          name: "Football",
-          tag: "The Beautiful Game",
-          img: "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=900&q=80&auto=format&fit=crop",
-        },
-        {
-          name: "Swimming",
-          tag: "Olympic Pool",
-          img: "https://images.unsplash.com/photo-1600965962361-9035dbfd1c50?w=900&q=80&auto=format&fit=crop",
-        },
-        {
-          name: "Tennis",
-          tag: "Precision & Power",
-          img: "https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=900&q=80&auto=format&fit=crop",
-        },
-        {
-          name: "Archery",
-          tag: "Stillness as Power",
-          img: "https://images.unsplash.com/photo-1531834685032-c34bf0d84c77?w=900&q=80&auto=format&fit=crop",
-        },
-        {
-          name: "Chess",
-          tag: "Mind Sport",
-          img: "https://images.unsplash.com/photo-1529699211952-734e80c4d42b?w=900&q=80&auto=format&fit=crop",
-        },
-        {
-          name: "Athletics",
-          tag: "Track & Field",
-          img: "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=900&q=80&auto=format&fit=crop",
-        },
-        {
-          name: "Gymnastics",
-          tag: "Grace & Power",
-          img: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=900&q=80&auto=format&fit=crop",
-        },
-        {
-          name: "Padel",
-          tag: "Emerging Global",
-          img: "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=900&q=80&auto=format&fit=crop",
-        },
-        {
-          name: "Judo",
-          tag: "Martial Arts",
-          img: "https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=900&q=80&auto=format&fit=crop",
-        },
-        {
-          name: "Equestrian",
-          tag: "Partnership",
-          img: "https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?w=900&q=80&auto=format&fit=crop",
-        },
-        {
-          name: "Sailing",
-          tag: "Wind & Water",
-          img: "https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=900&q=80&auto=format&fit=crop",
-        },
+        { name: "Cricket",    tag: "National Game",      img: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=800&q=80&auto=format&fit=crop" },
+        { name: "Football",   tag: "The Beautiful Game", img: "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=800&q=80&auto=format&fit=crop" },
+        { name: "Swimming",   tag: "Olympic Pool",       img: "https://images.unsplash.com/photo-1600965962361-9035dbfd1c50?w=800&q=80&auto=format&fit=crop" },
+        { name: "Tennis",     tag: "Precision & Power",  img: "https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=800&q=80&auto=format&fit=crop" },
+        { name: "Archery",    tag: "Stillness as Power", img: "https://images.unsplash.com/photo-1531834685032-c34bf0d84c77?w=800&q=80&auto=format&fit=crop" },
+        { name: "Chess",      tag: "Mind Sport",         img: "https://images.unsplash.com/photo-1529699211952-734e80c4d42b?w=800&q=80&auto=format&fit=crop" },
+        { name: "Athletics",  tag: "Track & Field",      img: "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=800&q=80&auto=format&fit=crop" },
+        { name: "Gymnastics", tag: "Grace & Power",      img: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800&q=80&auto=format&fit=crop" },
+        { name: "Padel",      tag: "Emerging Global",    img: "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?w=800&q=80&auto=format&fit=crop" },
+        { name: "Judo",       tag: "Martial Arts",       img: "https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=800&q=80&auto=format&fit=crop" },
+        { name: "Equestrian", tag: "Partnership",        img: "https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?w=800&q=80&auto=format&fit=crop" },
+        { name: "Sailing",    tag: "Wind & Water",       img: "https://images.unsplash.com/photo-1473116763249-2faaef81ccda?w=800&q=80&auto=format&fit=crop" },
+        { name: "Basketball", tag: "Above the Rim",      img: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&q=80&auto=format&fit=crop" },
+        { name: "Badminton",  tag: "Speed & Agility",    img: "https://images.unsplash.com/photo-1593766788306-28561086694e?w=800&q=80&auto=format&fit=crop" },
+        { name: "Cycling",    tag: "Endurance & Speed",  img: "https://images.unsplash.com/photo-1541625602330-2277a4c46182?w=800&q=80&auto=format&fit=crop" },
+        { name: "Wrestling",  tag: "Discipline & Grit",  img: "https://images.unsplash.com/photo-1608245449230-4ac19066d2d0?w=800&q=80&auto=format&fit=crop" },
       ];
 
       // ─── LIGHTBOX ───
@@ -2328,43 +2464,80 @@
         lightboxImg.src = "";
       }
       lightboxClose.addEventListener("click", closeLightbox);
-      lightbox.addEventListener("click", (e) => {
-        if (e.target === lightbox) closeLightbox();
-      });
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") closeLightbox();
-      });
+      lightbox.addEventListener("click", (e) => { if (e.target === lightbox) closeLightbox(); });
+      document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeLightbox(); });
 
-      const sportsContainer = document.getElementById("sportsRows");
-      sportsData.forEach((s, i) => {
-        const row = document.createElement("div");
-        row.className = "sport-row";
-        row.innerHTML = `
-    <div class="sport-num">0${i + 1}</div>
-    <div class="sport-name">${s.name}</div>
-    <div class="sport-thumb"><img src="${s.img}" alt="${s.name}" loading="lazy"></div>
-  `;
-        sportsContainer.appendChild(row);
-
-        // click → open lightbox
-        row.addEventListener("click", () => openLightbox(s.img, s.name));
-
-        // cursor hover (desktop only)
+      function buildCard(s) {
+        const card = document.createElement("div");
+        card.className = "sport-card";
+        card.innerHTML = `
+          <img class="sport-card-img" src="${s.img}" alt="${s.name}" loading="lazy">
+          <div class="sport-card-body">
+            <span class="sport-card-tag">${s.tag}</span>
+            <span class="sport-card-name">${s.name}</span>
+            <span class="sport-card-arrow">Explore ↗</span>
+          </div>`;
+        card.addEventListener("click", () => openLightbox(s.img, s.name));
         if (!isTouchDevice()) {
-          row.addEventListener("mouseenter", () =>
-            document.body.classList.add("cursor-hover"),
-          );
-          row.addEventListener("mouseleave", () =>
-            document.body.classList.remove("cursor-hover"),
-          );
+          card.addEventListener("mouseenter", () => document.body.classList.add("cursor-hover"));
+          card.addEventListener("mouseleave", () => document.body.classList.remove("cursor-hover"));
         }
+        return card;
+      }
+
+      function populateTicker(trackEl, items) {
+        // Fill with 3 copies to ensure seamless loop at any viewport width
+        [0, 1, 2].forEach(() => {
+          items.forEach(s => trackEl.appendChild(buildCard(s)));
+        });
+      }
+
+      const row1 = document.getElementById("tickerRow1");
+      const row2 = document.getElementById("tickerRow2");
+
+      // Split: row1 gets first half, row2 gets second half (both sets tripled)
+      const half = Math.ceil(sportsData.length / 2);
+      populateTicker(row1, sportsData.slice(0, half));
+      populateTicker(row2, sportsData.slice(half));
+
+      // rAF-driven ticker with smooth pause/resume easing
+      function runTicker(trackEl, pxPerFrame, reverse) {
+        const gap = 22;
+        const cards = trackEl.querySelectorAll(".sport-card");
+        const setCount = cards.length / 3; // we built 3 copies
+        const cardW = () => trackEl.querySelector(".sport-card").getBoundingClientRect().width + gap;
+        let pos = reverse ? -(cardW() * setCount) : 0;
+        let targetSpeed = pxPerFrame;
+        let currentSpeed = pxPerFrame;
+        let hovered = false;
+
+        const wrap = trackEl.closest(".sports-carousel-wrap");
+        wrap.addEventListener("mouseenter", () => { hovered = true; });
+        wrap.addEventListener("mouseleave", () => { hovered = false; });
+
+        function tick() {
+          currentSpeed += ((hovered ? 0 : targetSpeed) - currentSpeed) * 0.07;
+          pos += reverse ? currentSpeed : -currentSpeed;
+          const setW = cardW() * setCount;
+          if (!reverse && pos < -setW) pos += setW;
+          if ( reverse && pos >  0)   pos -= setW;
+          trackEl.style.transform = `translateX(${pos}px)`;
+          requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      }
+
+      // Wait for images/layout, then start
+      window.addEventListener("load", () => {
+        runTicker(row1, 0.55, false);
+        runTicker(row2, 0.45, true);
       });
 
-      gsap.from(".sport-row", {
-        x: -30,
+      // Scroll-driven entrance for the whole section
+      gsap.from(".sports-carousel-wrap", {
         opacity: 0,
-        stagger: 0.06,
-        duration: 0.9,
+        y: 40,
+        duration: 1.2,
         ease: "power3.out",
         scrollTrigger: { trigger: "#sports-list", start: "top 75%" },
       });
